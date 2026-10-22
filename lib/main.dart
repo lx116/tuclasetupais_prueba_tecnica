@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'core/di/injection.dart';
-import 'features/contacts/presentation/cubit/contacts_provider.dart';
-import 'features/contacts/presentation/ui/contacts_list.dart';
+import 'core/router/app_router.dart';
+import 'core/router/app_routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,22 +12,34 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key, this.initialLocation = AppRoutes.contacts});
+
+  /// Only used when the platform does not provide a location (on web the
+  /// browser URL wins).
+  final String initialLocation;
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late final GoRouter _router = createAppRouter(
+    initialLocation: widget.initialLocation,
+  );
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Contacts',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text('Contacts'),
-        ),
-        // Temporary: the list is mounted directly until routing is in place.
-        body: const ContactsProvider(child: ContactsList()),
-      ),
+      routerConfig: _router,
     );
   }
 }

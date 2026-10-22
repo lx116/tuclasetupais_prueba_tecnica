@@ -13,7 +13,7 @@ Branch: feat/contact-detail (stacked on feat/contact-list, PR #1). Delivery: wor
 
 ## Tasks
 - T1 (S7) Move Contact, catalog, validators, ContactModel, PhoneNumberValidator and ServiceGetContacts to lib/core/contacts; no behavior change. Route: inline. Commit: see git log "refactor: move shared contact code to core"
-- T2 (S1, S2) go_router skeleton: routes, AppRoutes, NotFoundPage, ContactsPage, MaterialApp.router. Route: inline. Commit: pending
+- T2 (S1, S2) go_router skeleton: routes, AppRoutes, NotFoundPage, ContactsPage, MaterialApp.router. Route: inline. Commit: see git log "feat(router): add go_router skeleton"
 - T3 (S1-S6, S8) contact_detail feature, ContactsAvailability gate, list item navigation, DI. Route: inline. Commit: pending
 
 Route declaration: all inline, sequential and dependent units, no writer trigger (no independent parallel units, context under backstop).
