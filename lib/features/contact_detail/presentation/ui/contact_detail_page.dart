@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/favorites/presentation/favorite_button.dart';
 import '../../../../core/layout/breakpoints.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/router/current_location.dart';
@@ -50,7 +51,7 @@ class ContactDetailPage extends StatelessWidget {
           if (wide) return body;
           return Column(
             children: [
-              const _MobileHeader(),
+              _MobileHeader(contactId: contactId),
               Expanded(child: body),
             ],
           );
@@ -61,7 +62,9 @@ class ContactDetailPage extends StatelessWidget {
 }
 
 class _MobileHeader extends StatelessWidget {
-  const _MobileHeader();
+  const _MobileHeader({required this.contactId});
+
+  final int contactId;
 
   @override
   Widget build(BuildContext context) {
@@ -97,8 +100,14 @@ class _MobileHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              // Keeps the title centered next to the back button.
-              const SizedBox(width: 56),
+              SizedBox(
+                width: 56,
+                child: FavoriteButton(
+                  contactId: contactId,
+                  color: AppColors.strongCyan,
+                  size: 24,
+                ),
+              ),
             ],
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/contacts/domain/entities/contact_catalog.dart';
+import '../../../../core/favorites/presentation/favorite_button.dart';
 import '../../../../core/layout/breakpoints.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/router/contacts_query.dart';
@@ -101,6 +102,9 @@ class ContactsList extends StatelessWidget {
                       contact: contact,
                       card: !wide,
                       selected: contact.id == selectedId,
+                      action: wide
+                          ? FavoriteButton(contactId: contact.id)
+                          : null,
                       onTap: () => context.go(
                         AppRoutes.contactDetail(contact.id, query: query),
                       ),

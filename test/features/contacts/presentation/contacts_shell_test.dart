@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/favorites/presentation/favorites_cubit.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/service_get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/di/injection.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/router/app_router.dart';
@@ -37,6 +39,7 @@ void main() {
   late _CountingDice dice;
 
   setUp(() async {
+    SharedPreferences.setMockInitialValues({});
     await sl.reset();
     await initDependencies();
     dice = _CountingDice(2);
@@ -341,6 +344,113 @@ void main() {
       expect(router.routeInformationProvider.value.uri.path, '/contacts');
       expect(find.byType(ContactsPage), findsOneWidget);
       expect(find.byType(ContactListItem), findsWidgets);
+    });
+  });
+
+  group('favorites', () {
+    FavoritesCubit favorites() => sl<FavoritesCubit>();
+
+    testWidgets(
+      'wide: tapping a row star toggles it without opening the contact',
+      (tester) async {
+        final router = await open(tester, '/contacts', size: _wide);
+        expect(find.byTooltip('Agregar a favoritos'), findsWidgets);
+
+        await tester.tap(find.byTooltip('Agregar a favoritos').first);
+        await tester.pump();
+
+        expect(favorites().state.ids, {1});
+        expect(router.routeInformationProvider.value.uri.path, '/contacts');
+        expect(find.byTooltip('Quitar de favoritos'), findsOneWidget);
+        expect(find.text('1'), findsOneWidget, reason: 'header badge');
+      },
+    );
+
+    testWidgets('wide: the detail pill and the row star stay in sync', (
+      tester,
+    ) async {
+      await open(tester, '/contacts/2', size: _wide);
+      expect(
+        find.descendant(
+          of: find.byType(ContactDetailPage),
+          matching: find.text('Agregar a favoritos'),
+        ),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('Agregar a favoritos'));
+      await tester.pump();
+
+      expect(favorites().state.ids, {2});
+      expect(find.text('En favoritos'), findsOneWidget);
+      expect(find.byTooltip('Quitar de favoritos'), findsOneWidget);
+    });
+
+    testWidgets('wide: the header offers the favorites page', (tester) async {
+      await open(tester, '/contacts', size: _wide);
+
+      expect(find.text('Favoritos'), findsOneWidget);
+    });
+
+    testWidgets(
+      'mobile: the list rows have no star, the header links to favorites',
+      (tester) async {
+        await open(tester, '/contacts', size: _mobile);
+
+        expect(find.byTooltip('Agregar a favoritos'), findsNothing);
+        expect(find.byTooltip('Favoritos'), findsOneWidget);
+      },
+    );
+
+    testWidgets('mobile: the detail header has the star', (tester) async {
+      await open(tester, '/contacts/2', size: _mobile);
+
+      await tester.tap(find.byTooltip('Agregar a favoritos'));
+      await tester.pump();
+
+      expect(favorites().state.ids, {2});
+      expect(find.byTooltip('Quitar de favoritos'), findsOneWidget);
+    });
+
+    testWidgets(
+      'a favorite toggled through the app wiring is saved on the device',
+      (tester) async {
+        // The storage plugin needs the real clock, so this runs outside the
+        // fake-async zone of the widget test.
+        final stored = await tester.runAsync(() async {
+          await favorites().toggle(4);
+          return (await SharedPreferences.getInstance()).getStringList(
+            'favorite_contact_ids',
+          );
+        });
+
+        expect(stored, ['4']);
+      },
+    );
+
+    testWidgets('stored favorites show as marked after a restart', (
+      tester,
+    ) async {
+      SharedPreferences.setMockInitialValues({
+        'favorite_contact_ids': ['2'],
+      });
+      await favorites().load();
+
+      await open(tester, '/contacts/2', size: _mobile);
+
+      expect(find.byTooltip('Quitar de favoritos'), findsOneWidget);
+    });
+
+    testWidgets('favorites survive resizing and navigation', (tester) async {
+      await open(tester, '/contacts/3', size: _wide);
+      await tester.tap(find.text('Agregar a favoritos'));
+      await tester.pump();
+
+      resize(tester, _mobile);
+      await tester.pumpAndSettle();
+
+      expect(find.byTooltip('Quitar de favoritos'), findsOneWidget);
+      expect(favorites().state.ids, {3});
     });
   });
 }

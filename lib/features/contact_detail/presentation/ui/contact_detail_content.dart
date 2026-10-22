@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/contacts/domain/entities/contact.dart';
+import '../../../../core/favorites/presentation/favorite_button.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text.dart';
 import '../../../../core/utils/initials.dart';
@@ -49,29 +50,37 @@ class _Wide extends StatelessWidget {
                         Container(height: 88, color: AppColors.darkTeal),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(144, 12, 28, 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Wrap(
+                            spacing: 16,
+                            runSpacing: 12,
+                            crossAxisAlignment: WrapCrossAlignment.end,
                             children: [
-                              Text(
-                                contact.name,
-                                style: appText(
-                                  size: 24,
-                                  weight: 800,
-                                  color: AppColors.darkTeal,
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    contact.name,
+                                    style: appText(
+                                      size: 24,
+                                      weight: 800,
+                                      color: AppColors.darkTeal,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${contact.role} · ${contact.department}',
+                                    style: appText(
+                                      size: 14,
+                                      color: AppColors.muted,
+                                    ),
+                                  ),
+                                  if (!contact.active) ...[
+                                    const SizedBox(height: 8),
+                                    const _Pill(label: 'Inactivo'),
+                                  ],
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${contact.role} · ${contact.department}',
-                                style: appText(
-                                  size: 14,
-                                  color: AppColors.muted,
-                                ),
-                              ),
-                              if (!contact.active) ...[
-                                const SizedBox(height: 8),
-                                const _Pill(label: 'Inactivo'),
-                              ],
+                              FavoritePillButton(contactId: contact.id),
                             ],
                           ),
                         ),

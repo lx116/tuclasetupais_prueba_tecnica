@@ -16,12 +16,16 @@ class ContactListItem extends StatelessWidget {
     this.onTap,
     this.selected = false,
     this.card = false,
+    this.action,
   });
 
   final Contact contact;
   final VoidCallback? onTap;
   final bool selected;
   final bool card;
+
+  /// Shown at the end of the flat row (the star); the card row has a chevron.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +75,8 @@ class ContactListItem extends StatelessWidget {
         if (card) ...[
           const SizedBox(width: 8),
           const Icon(Icons.chevron_right, size: 20, color: AppColors.darkTeal),
-        ],
+        ] else
+          ?action,
       ],
     );
 

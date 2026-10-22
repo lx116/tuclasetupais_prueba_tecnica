@@ -4,6 +4,7 @@ import '../../../../core/layout/breakpoints.dart';
 import '../../../../core/router/contacts_query.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/brand_header.dart';
+import '../../../../core/widgets/header_nav.dart';
 import 'contacts_page.dart';
 
 const double _listColumnWidth = 400;
@@ -66,7 +67,9 @@ class _ContactsShellState extends State<ContactsShell> {
         if (wide) {
           return Column(
             children: [
-              const BrandHeader(),
+              const BrandHeader(
+                trailing: HeaderNav(current: HeaderSection.contacts),
+              ),
               Expanded(
                 child: Row(
                   children: [

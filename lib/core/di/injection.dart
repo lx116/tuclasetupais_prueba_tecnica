@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../features/contact_detail/data/datasources/contact_detail_local_datasource.dart';
 import '../../features/contact_detail/data/repositories/contact_detail_repository_impl.dart';
@@ -9,6 +10,13 @@ import '../../features/contact_detail/presentation/cubit/contact_detail_cubit.da
 import '../../features/contacts/data/datasources/contacts_local_datasource.dart';
 import '../../features/contacts/data/datasources/dice_roller.dart';
 import '../contacts/data/contacts_availability.dart';
+import '../favorites/data/favorites_local_datasource.dart';
+import '../favorites/data/favorites_repository_impl.dart';
+import '../favorites/domain/repositories/favorites_repository.dart';
+import '../favorites/domain/usecases/get_favorite_ids.dart';
+import '../favorites/domain/usecases/save_favorite_ids.dart';
+import '../favorites/domain/usecases/toggle_favorite.dart';
+import '../favorites/presentation/favorites_cubit.dart';
 import '../contacts/data/service_get_contacts.dart';
 import '../../features/contacts/data/repositories/contact_repository_impl.dart';
 import '../../features/contacts/domain/repositories/contact_repository.dart';
@@ -16,6 +24,11 @@ import '../../features/contacts/domain/usecases/filter_contacts_by_department.da
 import '../../features/contacts/domain/usecases/get_contacts.dart';
 import '../../features/contacts/domain/usecases/search_contacts.dart';
 import '../../features/contacts/presentation/cubit/contacts_cubit.dart';
+import '../../features/favorites/data/datasources/favorite_contacts_local_datasource.dart';
+import '../../features/favorites/data/repositories/favorite_contacts_repository_impl.dart';
+import '../../features/favorites/domain/repositories/favorite_contacts_repository.dart';
+import '../../features/favorites/domain/usecases/get_favorite_contacts.dart';
+import '../../features/favorites/presentation/cubit/favorite_contacts_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -29,6 +42,20 @@ const Duration contactsLatency = Duration(milliseconds: 800);
 Future<void> initDependencies() async {
   // shared
   sl.registerLazySingleton<ContactsAvailability>(ContactsAvailability.new);
+
+  sl.registerLazySingleton<FavoritesLocalDataSource>(
+    () => FavoritesLocalDataSource(SharedPreferences.getInstance),
+  );
+  sl.registerLazySingleton<FavoritesRepository>(
+    () => FavoritesRepositoryImpl(sl<FavoritesLocalDataSource>()),
+  );
+  sl.registerLazySingleton<FavoritesCubit>(
+    () => FavoritesCubit(
+      GetFavoriteIds(sl<FavoritesRepository>()),
+      const ToggleFavorite(),
+      SaveFavoriteIds(sl<FavoritesRepository>()),
+    ),
+  );
 
   // contacts
   sl.registerLazySingleton<ServiceGetContacts>(
@@ -77,10 +104,28 @@ Future<void> initDependencies() async {
   sl.registerFactory<ContactDetailCubit>(
     () => ContactDetailCubit(sl<GetContactById>()),
   );
+
+  // favorites page
+  sl.registerLazySingleton<FavoriteContactsLocalDataSource>(
+    () => FavoriteContactsLocalDataSource(
+      sl<ServiceGetContacts>(),
+      sl<ContactsAvailability>(),
+    ),
+  );
+  sl.registerLazySingleton<FavoriteContactsRepository>(
+    () => FavoriteContactsRepositoryImpl(sl<FavoriteContactsLocalDataSource>()),
+  );
+  sl.registerLazySingleton<GetFavoriteContacts>(
+    () => GetFavoriteContacts(sl<FavoriteContactsRepository>()),
+  );
+  sl.registerFactory<FavoriteContactsCubit>(
+    () => FavoriteContactsCubit(sl<GetFavoriteContacts>()),
+  );
 }
 
 /// Starts the services that must have their data ready before `runApp`.
 /// Called from `main()` right after [initDependencies].
 Future<void> startServices() async {
   await sl<ServiceGetContacts>().load();
+  await sl<FavoritesCubit>().load();
 }
