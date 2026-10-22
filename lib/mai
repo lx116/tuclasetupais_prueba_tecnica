@@ -1,0 +1,66 @@
+HOLA!
+
+Necesidades del proyecto:
+
+PREPARATIVO:
+
+Arquictura.
+
+TICKIET 01 -
+1- Una lista de contactos asincrona [].
+1.1- Estados cargando, error, data []
+1.2 Estado empty []
+
+TICKET 02 -
+4- Detalle del contacto[]
+
+TICKET 03-
+
+6- IU
+
+La interfaz de usuario requiere shell route para dividir la vista en dos columnas.
+La columan de contactos y la columna de detalle.
+Esta herramienta viene incluida dentro de go_router.
+
+TICKET 03 -
+2- Busqueda en tiempo real. []
+2.1 QUERYPARMS SEARCH
+
+TICKET 04 -
+3- Filtros []
+3.1 filtro por departamento.
+3.2 QUERYPARMS FILTER
+
+TICKET 05
+5- Favoritos
+
+BONUS:
+
+Go_router.
+QUERYPARMS
+
+
+La arquitectura vamos a trabajarla bajo un Bloc Feature First.
+
+
+
+Como cargar los datos?
+
+TESTS: Lectura, carga y validaciones. Este servicio debe tener un set de test para la revision.
+
+Necesito un servicio que arranque junto con la app.
+
+Primero: En main llamar a ServiceGetContacs
+Segundo: El servicio debe validar que el JSON exista en el sistema.
+
+BAD PATH: Validar primero que el sistema tenga el JSON. Si el JSON no se encuentra, cancelar la carga de datos
+Lista Empty
+GooD path: lista existe y los datos cargan con normalidad
+
+Tercero: Se cargan los datos en memoria y se hacen accibles por el datasoruce.
+
+BAD: Datos no corresponde con el modelo
+GOOD: Datos correctos.
+
+Esto me ayuda a que los datos se encuentren en el sistema al momento del arranque
+Si los datos no se encuentran, lanzar un log que indique que hacen falta. De esta forma son auditable
