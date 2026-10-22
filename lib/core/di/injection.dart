@@ -3,7 +3,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../features/contacts/data/datasources/contacts_local_datasource.dart';
 import '../../features/contacts/data/datasources/dice_roller.dart';
-import '../../features/contacts/data/datasources/service_get_contacts.dart';
+import '../contacts/data/service_get_contacts.dart';
 import '../../features/contacts/data/repositories/contact_repository_impl.dart';
 import '../../features/contacts/domain/repositories/contact_repository.dart';
 import '../../features/contacts/domain/usecases/get_contacts.dart';

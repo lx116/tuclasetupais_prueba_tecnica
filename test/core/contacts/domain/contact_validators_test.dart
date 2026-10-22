@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/entities/contact.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/entities/contact_catalog.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/entities/contact_validators.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact_catalog.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact_validators.dart';
 
 Contact _contact(int id) => Contact(
   id: id,

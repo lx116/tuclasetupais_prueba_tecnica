@@ -1,12 +1,12 @@
 import 'dart:developer' as developer;
 
-import '../models/contact_model.dart';
+import '../../../../core/contacts/data/models/contact_model.dart';
 import 'contacts_calls/call_empty.dart';
 import 'contacts_calls/call_error.dart';
 import 'contacts_calls/call_ok.dart';
 import 'contacts_calls/contacts_call.dart';
 import 'dice_roller.dart';
-import 'service_get_contacts.dart';
+import '../../../../core/contacts/data/service_get_contacts.dart';
 
 /// Serves the contacts that [ServiceGetContacts] loaded into memory, behind a
 /// simulated back call: after [latency], a die roll picks the outcome.

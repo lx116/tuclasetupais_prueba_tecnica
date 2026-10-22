@@ -1,4 +1,4 @@
-import '../../domain/entities/contact.dart';
+import '../../../../core/contacts/domain/entities/contact.dart';
 import '../../domain/repositories/contact_repository.dart';
 import '../datasources/contacts_local_datasource.dart';
 

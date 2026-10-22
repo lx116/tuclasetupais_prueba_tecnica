@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/di/injection.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/contacts_local_datasource.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/service_get_contacts.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/models/contact_model.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/service_get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/models/contact_model.dart';
 import 'package:tuclasetupais_prueba_tecnica/main.dart' as app;
 
 import 'features/contacts/support/contacts_fixtures.dart';

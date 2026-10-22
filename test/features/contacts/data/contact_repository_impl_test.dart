@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/contacts_local_datasource.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/service_get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/service_get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/repositories/contact_repository_impl.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/entities/contact.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contacts_connection_exception.dart';
 
 import '../support/contacts_fixtures.dart';

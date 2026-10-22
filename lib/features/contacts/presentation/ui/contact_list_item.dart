@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/contact.dart';
+import '../../../../core/contacts/domain/entities/contact.dart';
 
 /// Temporary row for a single [Contact].
 class ContactListItem extends StatelessWidget {

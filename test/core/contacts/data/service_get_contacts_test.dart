@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/service_get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/service_get_contacts.dart';
 
-import '../support/contacts_fixtures.dart';
+import '../../../features/contacts/support/contacts_fixtures.dart';
 
 const _path = 'lib/assets/contacs.json';
 

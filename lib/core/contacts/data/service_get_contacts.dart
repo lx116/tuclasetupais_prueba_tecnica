@@ -4,8 +4,8 @@ import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import '../../domain/entities/contact_validators.dart';
-import '../models/contact_model.dart';
+import '../domain/entities/contact_validators.dart';
+import 'models/contact_model.dart';
 
 const String contactsAssetPath = 'lib/assets/contacs.json';
 

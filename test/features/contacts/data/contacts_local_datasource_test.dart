@@ -5,7 +5,7 @@ import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/contacts_calls/call_error.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/contacts_calls/call_ok.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/contacts_local_datasource.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/service_get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/service_get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contacts_connection_exception.dart';
 
 import '../support/contacts_fixtures.dart';

@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:cellphone_validator/cellphone_validator.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/models/contact_model.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/models/phone_number_validator.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/entities/contact.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/entities/contact_validators.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/models/contact_model.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/models/phone_number_validator.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact_validators.dart';
 
 Map<String, dynamic> _json({Map<String, dynamic>? overrides}) => {
   'id': 1,

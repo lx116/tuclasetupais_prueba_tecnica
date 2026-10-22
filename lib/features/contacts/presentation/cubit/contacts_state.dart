@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../../domain/entities/contact.dart';
+import '../../../../core/contacts/domain/entities/contact.dart';
 
 sealed class ContactsState {
   const ContactsState();
