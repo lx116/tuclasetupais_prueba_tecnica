@@ -80,7 +80,7 @@ class _MobileHeader extends StatelessWidget {
                     ? context.pop()
                     : context.go(
                         AppRoutes.contactsLocation(
-                          search: currentSearchOf(context),
+                          query: currentQueryOf(context),
                         ),
                       ),
                 icon: const Icon(Icons.chevron_left, size: 28),

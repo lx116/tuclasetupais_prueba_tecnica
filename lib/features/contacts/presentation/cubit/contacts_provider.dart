@@ -10,6 +10,7 @@ class ContactsProvider extends StatelessWidget {
     super.key,
     required this.child,
     this.initialSearch = '',
+    this.initialDepartment = '',
   });
 
   final Widget child;
@@ -17,11 +18,15 @@ class ContactsProvider extends StatelessWidget {
   /// The search text from the URL, applied as soon as the data arrives.
   final String initialSearch;
 
+  /// The department filter from the URL, applied like [initialSearch].
+  final String initialDepartment;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ContactsCubit>(
       create: (_) => sl<ContactsCubit>()
         ..search(initialSearch)
+        ..filterByDepartment(initialDepartment)
         ..load(),
       child: child,
     );

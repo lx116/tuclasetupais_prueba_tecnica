@@ -14,7 +14,7 @@ class BackToContactsButton extends StatelessWidget {
     return SecondaryButton(
       label: 'Volver a contactos',
       onPressed: () => context.go(
-        AppRoutes.contactsLocation(search: currentSearchOf(context)),
+        AppRoutes.contactsLocation(query: currentQueryOf(context)),
       ),
     );
   }

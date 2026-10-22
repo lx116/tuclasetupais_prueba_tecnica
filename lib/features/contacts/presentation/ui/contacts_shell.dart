@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/layout/breakpoints.dart';
+import '../../../../core/router/contacts_query.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/brand_header.dart';
 import 'contacts_page.dart';
@@ -19,7 +20,7 @@ class ContactsShell extends StatefulWidget {
     required this.detail,
     required this.detailOpen,
     this.selectedId,
-    this.search = '',
+    this.query = const ContactsQuery(),
   });
 
   /// The ShellRoute child: the placeholder or the open contact.
@@ -31,8 +32,8 @@ class ContactsShell extends StatefulWidget {
   /// The id of the open contact, when the URL holds a numeric one.
   final int? selectedId;
 
-  /// The `?search=` text of the URL.
-  final String search;
+  /// The search and filter of the URL.
+  final ContactsQuery query;
 
   @override
   State<ContactsShell> createState() => _ContactsShellState();
@@ -57,7 +58,7 @@ class _ContactsShellState extends State<ContactsShell> {
             ? ContactsPage(
                 key: _listKey,
                 selectedId: widget.selectedId,
-                search: widget.search,
+                query: widget.query,
               )
             : const SizedBox.shrink();
         final detail = KeyedSubtree(key: _detailKey, child: widget.detail);

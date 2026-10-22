@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/layout/breakpoints.dart';
-import '../../../../core/router/app_routes.dart';
+import '../../../../core/router/contacts_query.dart';
 import '../../../../core/router/current_location.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/brand_header.dart';
@@ -11,31 +11,38 @@ import '../../../../shared/presentation/widgets/search_input.dart';
 import '../cubit/contacts_cubit.dart';
 import '../cubit/contacts_provider.dart';
 import 'contacts_list.dart';
+import 'department_filter.dart';
 
 /// The contacts column: owns the [ContactsCubit] through its provider.
 ///
-/// [search] is the `?search=` text of the URL, the single source of truth:
-/// typing writes it back to the URL and the URL drives the filter.
+/// [query] is the `?search=` and `?department=` of the URL, the single source
+/// of truth: typing or picking a chip writes it back to the URL and the URL
+/// drives the filter.
 class ContactsPage extends StatelessWidget {
-  const ContactsPage({super.key, this.selectedId, this.search = ''});
+  const ContactsPage({
+    super.key,
+    this.selectedId,
+    this.query = const ContactsQuery(),
+  });
 
   final int? selectedId;
-  final String search;
+  final ContactsQuery query;
 
   @override
   Widget build(BuildContext context) {
     return ContactsProvider(
-      initialSearch: search,
-      child: _ContactsView(selectedId: selectedId, search: search),
+      initialSearch: query.search,
+      initialDepartment: query.department,
+      child: _ContactsView(selectedId: selectedId, query: query),
     );
   }
 }
 
 class _ContactsView extends StatefulWidget {
-  const _ContactsView({required this.selectedId, required this.search});
+  const _ContactsView({required this.selectedId, required this.query});
 
   final int? selectedId;
-  final String search;
+  final ContactsQuery query;
 
   @override
   State<_ContactsView> createState() => _ContactsViewState();
@@ -45,22 +52,24 @@ class _ContactsViewState extends State<_ContactsView> {
   @override
   void didUpdateWidget(_ContactsView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.search != oldWidget.search) {
-      context.read<ContactsCubit>().search(widget.search);
+    final cubit = context.read<ContactsCubit>();
+    if (widget.query.search != oldWidget.query.search) {
+      cubit.search(widget.query.search);
+    }
+    if (widget.query.department != oldWidget.query.department) {
+      cubit.filterByDepartment(widget.query.department);
     }
   }
 
-  /// Writes the search to the URL; the rest of the location is kept. It uses
-  /// `go` because `replace` does not update the URL of the location it
+  /// Writes [next] to the URL; the path and any other parameter are kept. It
+  /// uses `go` because `replace` does not update the URL of the location it
   /// replaces. Typing is debounced, so each pause adds one history entry.
-  void _setSearch(String text) {
+  void _setQuery(ContactsQuery next) {
     final uri = currentUriOf(context);
-    final params = {...uri.queryParameters};
-    if (text.isEmpty) {
-      params.remove(AppRoutes.searchParam);
-    } else {
-      params[AppRoutes.searchParam] = text;
-    }
+    final params = {...uri.queryParameters}
+      ..remove(ContactsQuery.searchParam)
+      ..remove(ContactsQuery.departmentParam)
+      ..addAll(next.toParams() ?? const {});
     context.go(
       Uri(
         path: uri.path,
@@ -73,10 +82,17 @@ class _ContactsViewState extends State<_ContactsView> {
   Widget build(BuildContext context) {
     final wide = isWideWidth(MediaQuery.sizeOf(context).width);
     final input = SearchInput(
-      value: widget.search,
-      onChanged: _setSearch,
+      value: widget.query.search,
+      onChanged: (text) =>
+          _setQuery(currentQueryOf(context).copyWith(search: text)),
       hintText: 'Buscar contactos',
       fontSize: wide ? 15 : 16,
+    );
+    final chips = DepartmentFilter(
+      selected: widget.query.department,
+      onChanged: (department) =>
+          _setQuery(currentQueryOf(context).copyWith(department: department)),
+      height: wide ? 34 : 36,
     );
 
     return Column(
@@ -87,9 +103,12 @@ class _ContactsViewState extends State<_ContactsView> {
             decoration: const BoxDecoration(
               border: Border(bottom: BorderSide(color: AppColors.border)),
             ),
-            child: input,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [input, const SizedBox(height: 12), chips],
+            ),
           )
-        else
+        else ...[
           ColoredBox(
             color: AppColors.darkTeal,
             child: Column(
@@ -102,11 +121,20 @@ class _ContactsViewState extends State<_ContactsView> {
               ],
             ),
           ),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: AppColors.border)),
+            ),
+            child: chips,
+          ),
+        ],
         Expanded(
           child: ContactsList(
             selectedId: widget.selectedId,
-            search: widget.search,
-            onClearSearch: () => _setSearch(''),
+            query: widget.query,
+            onClear: () => _setQuery(const ContactsQuery()),
           ),
         ),
       ],

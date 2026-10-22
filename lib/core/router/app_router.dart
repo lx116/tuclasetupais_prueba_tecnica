@@ -5,6 +5,7 @@ import '../../features/contact_detail/presentation/ui/contact_detail_page.dart';
 import '../../features/contacts/presentation/ui/contacts_shell.dart';
 import '../../features/contacts/presentation/ui/detail_placeholder.dart';
 import 'app_routes.dart';
+import 'contacts_query.dart';
 import 'not_found_page.dart';
 
 GoRouter createAppRouter({String initialLocation = AppRoutes.contacts}) {
@@ -21,7 +22,7 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.contacts}) {
           final detailOpen = segments.length > 1;
           return Scaffold(
             body: ContactsShell(
-              search: state.uri.queryParameters[AppRoutes.searchParam] ?? '',
+              query: ContactsQuery.fromUri(state.uri),
               detailOpen: detailOpen,
               selectedId: detailOpen ? int.tryParse(segments[1]) : null,
               detail: child,

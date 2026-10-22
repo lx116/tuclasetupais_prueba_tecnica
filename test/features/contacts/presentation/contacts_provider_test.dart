@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/di/injection.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/filter_contacts_by_department.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/search_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
@@ -25,6 +26,7 @@ void main() {
       () => ContactsCubit(
         GetContacts(_EmptyRepository()),
         const SearchContacts(),
+        const FilterContactsByDepartment(),
       ),
     );
     late ContactsState seen;

@@ -12,6 +12,7 @@ import '../contacts/data/contacts_availability.dart';
 import '../contacts/data/service_get_contacts.dart';
 import '../../features/contacts/data/repositories/contact_repository_impl.dart';
 import '../../features/contacts/domain/repositories/contact_repository.dart';
+import '../../features/contacts/domain/usecases/filter_contacts_by_department.dart';
 import '../../features/contacts/domain/usecases/get_contacts.dart';
 import '../../features/contacts/domain/usecases/search_contacts.dart';
 import '../../features/contacts/presentation/cubit/contacts_cubit.dart';
@@ -49,8 +50,15 @@ Future<void> initDependencies() async {
     () => GetContacts(sl<ContactRepository>()),
   );
   sl.registerLazySingleton<SearchContacts>(SearchContacts.new);
+  sl.registerLazySingleton<FilterContactsByDepartment>(
+    FilterContactsByDepartment.new,
+  );
   sl.registerFactory<ContactsCubit>(
-    () => ContactsCubit(sl<GetContacts>(), sl<SearchContacts>()),
+    () => ContactsCubit(
+      sl<GetContacts>(),
+      sl<SearchContacts>(),
+      sl<FilterContactsByDepartment>(),
+    ),
   );
 
   // contact detail
