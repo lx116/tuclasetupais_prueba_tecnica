@@ -1,3 +1,4 @@
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/contacts_availability.dart';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -5,7 +6,7 @@ import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/contacts_calls/call_error.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/contacts_calls/call_ok.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/contacts_local_datasource.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/service_get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/service_get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contacts_connection_exception.dart';
 
 import '../support/contacts_fixtures.dart';
@@ -22,7 +23,12 @@ ContactsLocalDataSource _datasource(
   ServiceGetContacts service, {
   int roll = 2,
   Duration latency = Duration.zero,
-}) => ContactsLocalDataSource(service, dice: FixedDice(roll), latency: latency);
+}) => ContactsLocalDataSource(
+  service,
+  dice: FixedDice(roll),
+  latency: latency,
+  availability: ContactsAvailability(),
+);
 
 Future<ServiceGetContacts> _loaded(Map<String, String> assets) async {
   final service = _service(assets);
@@ -97,6 +103,45 @@ void main() {
     await datasource.getContacts();
 
     expect(stopwatch.elapsedMilliseconds, greaterThanOrEqualTo(95));
+  });
+
+  group('availability for the detail', () {
+    final assets = {
+      _path: jsonEncode([contactJson()]),
+    };
+
+    test('a failed call marks the contacts unavailable', () async {
+      final availability = ContactsAvailability();
+      final datasource = ContactsLocalDataSource(
+        await _loaded(assets),
+        dice: FixedDice(1),
+        latency: Duration.zero,
+        availability: availability,
+      );
+
+      await expectLater(
+        datasource.getContacts,
+        throwsA(isA<ContactsConnectionException>()),
+      );
+
+      expect(availability.isAvailable, isFalse);
+    });
+
+    for (final roll in [2, 6]) {
+      test('a later successful call ($roll) restores it', () async {
+        final availability = ContactsAvailability()..markFailed();
+        final datasource = ContactsLocalDataSource(
+          await _loaded(assets),
+          dice: FixedDice(roll),
+          latency: Duration.zero,
+          availability: availability,
+        );
+
+        await datasource.getContacts();
+
+        expect(availability.isAvailable, isTrue);
+      });
+    }
   });
 
   group('local data (command CallOk)', () {

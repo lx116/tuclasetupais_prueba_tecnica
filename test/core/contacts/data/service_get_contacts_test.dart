@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tuclasetupais_prueba_tecnica/features/contacts/data/datasources/service_get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/service_get_contacts.dart';
 
-import '../support/contacts_fixtures.dart';
+import '../../../features/contacts/support/contacts_fixtures.dart';
 
 const _path = 'lib/assets/contacs.json';
 
@@ -14,6 +14,8 @@ class _LogEntry {
 }
 
 void main() {
+  _readTests();
+
   late List<_LogEntry> logs;
 
   ServiceGetContacts serviceWith(Map<String, String> assets) =>
@@ -92,6 +94,55 @@ void main() {
         expect(logs, hasLength(1));
         expect(logs.single.message, contains(_path));
       });
+    });
+  });
+}
+
+void _readTests() {
+  group('read()', () {
+    test('returns the loaded contacts', () async {
+      final service = ServiceGetContacts(
+        bundle: FakeAssetBundle({
+          _path: jsonEncode([contactJson(id: 1)]),
+        }),
+        assetPath: _path,
+        log: (message, {required level, error}) {},
+      );
+      await service.load();
+
+      expect(service.read().map((m) => m.id), [1]);
+    });
+
+    test('is empty when the JSON was missing', () async {
+      final service = ServiceGetContacts(
+        bundle: FakeAssetBundle({}),
+        assetPath: _path,
+        log: (message, {required level, error}) {},
+      );
+      await service.load();
+
+      expect(service.read(), isEmpty);
+    });
+
+    test('rethrows the format error when the data was invalid', () async {
+      final service = ServiceGetContacts(
+        bundle: FakeAssetBundle({_path: '{ nope'}),
+        assetPath: _path,
+        log: (message, {required level, error}) {},
+      );
+      await service.load();
+
+      expect(service.read, throwsFormatException);
+    });
+
+    test('fails loudly when the service never loaded', () {
+      final service = ServiceGetContacts(
+        bundle: FakeAssetBundle({}),
+        assetPath: _path,
+        log: (message, {required level, error}) {},
+      );
+
+      expect(service.read, throwsStateError);
     });
   });
 }
