@@ -39,15 +39,35 @@ class ContactsError extends ContactsState {
   int get hashCode => Object.hash(ContactsError, message);
 }
 
+/// The contacts to show. [query] is the search that produced them, empty when
+/// every contact is shown.
 class ContactsData extends ContactsState {
-  const ContactsData(this.contacts);
+  const ContactsData(this.contacts, {this.query = ''});
 
   final List<Contact> contacts;
+  final String query;
 
   @override
   bool operator ==(Object other) =>
-      other is ContactsData && listEquals(other.contacts, contacts);
+      other is ContactsData &&
+      other.query == query &&
+      listEquals(other.contacts, contacts);
 
   @override
-  int get hashCode => Object.hash(ContactsData, Object.hashAll(contacts));
+  int get hashCode =>
+      Object.hash(ContactsData, query, Object.hashAll(contacts));
+}
+
+/// There are contacts, but none matches the search [query].
+class ContactsNoResults extends ContactsState {
+  const ContactsNoResults(this.query);
+
+  final String query;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ContactsNoResults && other.query == query;
+
+  @override
+  int get hashCode => Object.hash(ContactsNoResults, query);
 }

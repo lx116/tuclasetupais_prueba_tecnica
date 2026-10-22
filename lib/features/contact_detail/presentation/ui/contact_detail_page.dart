@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/layout/breakpoints.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/router/current_location.dart';
 import '../../../../core/router/not_found_page.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text.dart';
@@ -77,7 +78,11 @@ class _MobileHeader extends StatelessWidget {
                 tooltip: 'Volver a contactos',
                 onPressed: () => context.canPop()
                     ? context.pop()
-                    : context.go(AppRoutes.contacts),
+                    : context.go(
+                        AppRoutes.contactsLocation(
+                          search: currentSearchOf(context),
+                        ),
+                      ),
                 icon: const Icon(Icons.chevron_left, size: 28),
                 color: AppColors.mintCream,
               ),

@@ -3,6 +3,7 @@ import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/conta
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contacts_connection_exception.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/search_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_state.dart';
 
@@ -30,8 +31,22 @@ class _FakeRepository implements ContactRepository {
   }
 }
 
-ContactsCubit _cubit(List<Object> results) =>
-    ContactsCubit(GetContacts(_FakeRepository(results)));
+ContactsCubit _cubit(List<Object> results) => ContactsCubit(
+  GetContacts(_FakeRepository(results)),
+  const SearchContacts(),
+);
+
+extension on Contact {
+  Contact copyOf({required int id, required String name}) => Contact(
+    id: id,
+    name: name,
+    role: role,
+    department: department,
+    email: email,
+    phone: phone,
+    active: active,
+  );
+}
 
 void main() {
   test('starts in the loading state', () {
@@ -118,6 +133,110 @@ void main() {
     await pending;
 
     expect(cubit.state, const ContactsLoading());
+  });
+
+  group('search', () {
+    final ana = _contact.copyOf(id: 1, name: 'Ana Pérez');
+    final bruno = _contact.copyOf(id: 2, name: 'Bruno Díaz');
+
+    test(
+      'filters the loaded contacts without calling the source again',
+      () async {
+        final cubit = _cubit([
+          [ana, bruno],
+        ]);
+        await cubit.load();
+
+        cubit.search('ana');
+
+        expect(cubit.state, ContactsData([ana], query: 'ana'));
+      },
+    );
+
+    test('an empty query shows every contact again', () async {
+      final cubit = _cubit([
+        [ana, bruno],
+      ]);
+      await cubit.load();
+      cubit.search('ana');
+
+      cubit.search('');
+
+      expect(cubit.state, ContactsData([ana, bruno]));
+    });
+
+    test('a query with no match is no results, not empty or error', () async {
+      final cubit = _cubit([
+        [ana, bruno],
+      ]);
+      await cubit.load();
+
+      cubit.search('zzz');
+
+      expect(cubit.state, const ContactsNoResults('zzz'));
+    });
+
+    test(
+      'a query set before the load is applied when the data arrives',
+      () async {
+        final cubit = _cubit([
+          [ana, bruno],
+        ]);
+
+        cubit.search('bruno');
+        expect(cubit.state, const ContactsLoading());
+        await cubit.load();
+
+        expect(cubit.state, ContactsData([bruno], query: 'bruno'));
+      },
+    );
+
+    test('reloading keeps the query', () async {
+      final cubit = _cubit([
+        [ana, bruno],
+        [ana, bruno],
+      ]);
+      await cubit.load();
+      cubit.search('ana');
+
+      await cubit.load();
+
+      expect(cubit.state, ContactsData([ana], query: 'ana'));
+    });
+
+    test('searching an empty source stays empty', () async {
+      final cubit = _cubit([<Contact>[]]);
+      await cubit.load();
+
+      cubit.search('ana');
+
+      expect(cubit.state, const ContactsEmpty());
+    });
+
+    test('searching does not hide a load error', () async {
+      final cubit = _cubit([const ContactsConnectionException()]);
+      await cubit.load();
+
+      cubit.search('ana');
+
+      expect(cubit.state, isA<ContactsError>());
+    });
+
+    test('the same query does not emit again', () async {
+      final cubit = _cubit([
+        [ana, bruno],
+      ]);
+      await cubit.load();
+      cubit.search('ana');
+      final emitted = <ContactsState>[];
+      final subscription = cubit.stream.listen(emitted.add);
+
+      cubit.search('ana');
+      await Future<void>.delayed(Duration.zero);
+      await subscription.cancel();
+
+      expect(emitted, isEmpty);
+    });
   });
 
   test('states compare by value', () {

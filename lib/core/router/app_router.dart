@@ -21,6 +21,7 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.contacts}) {
           final detailOpen = segments.length > 1;
           return Scaffold(
             body: ContactsShell(
+              search: state.uri.queryParameters[AppRoutes.searchParam] ?? '',
               detailOpen: detailOpen,
               selectedId: detailOpen ? int.tryParse(segments[1]) : null,
               detail: child,

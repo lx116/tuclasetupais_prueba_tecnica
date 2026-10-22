@@ -5,6 +5,7 @@ import 'package:tuclasetupais_prueba_tecnica/core/di/injection.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/search_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_provider.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_state.dart';
@@ -21,7 +22,10 @@ void main() {
     tester,
   ) async {
     sl.registerFactory<ContactsCubit>(
-      () => ContactsCubit(GetContacts(_EmptyRepository())),
+      () => ContactsCubit(
+        GetContacts(_EmptyRepository()),
+        const SearchContacts(),
+      ),
     );
     late ContactsState seen;
 
