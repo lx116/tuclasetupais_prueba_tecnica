@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contacts_connection_exception.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/filter_contacts_by_department.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/search_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
@@ -34,18 +35,20 @@ class _FakeRepository implements ContactRepository {
 ContactsCubit _cubit(List<Object> results) => ContactsCubit(
   GetContacts(_FakeRepository(results)),
   const SearchContacts(),
+  const FilterContactsByDepartment(),
 );
 
 extension on Contact {
-  Contact copyOf({required int id, required String name}) => Contact(
-    id: id,
-    name: name,
-    role: role,
-    department: department,
-    email: email,
-    phone: phone,
-    active: active,
-  );
+  Contact copyOf({required int id, required String name, String? department}) =>
+      Contact(
+        id: id,
+        name: name,
+        role: role,
+        department: department ?? this.department,
+        email: email,
+        phone: phone,
+        active: active,
+      );
 }
 
 void main() {
@@ -173,7 +176,7 @@ void main() {
 
       cubit.search('zzz');
 
-      expect(cubit.state, const ContactsNoResults('zzz'));
+      expect(cubit.state, const ContactsNoResults(query: 'zzz'));
     });
 
     test(
@@ -232,6 +235,125 @@ void main() {
       final subscription = cubit.stream.listen(emitted.add);
 
       cubit.search('ana');
+      await Future<void>.delayed(Duration.zero);
+      await subscription.cancel();
+
+      expect(emitted, isEmpty);
+    });
+  });
+
+  group('department filter', () {
+    final ana = _contact.copyOf(id: 1, name: 'Ana Pérez', department: 'Diseño');
+    final bruno = _contact.copyOf(
+      id: 2,
+      name: 'Bruno Díaz',
+      department: 'Ingeniería',
+    );
+    final anita = _contact.copyOf(
+      id: 3,
+      name: 'Anita Gómez',
+      department: 'Ingeniería',
+    );
+
+    ContactsCubit loaded() => _cubit([
+      [ana, bruno, anita],
+      [ana, bruno, anita],
+    ]);
+
+    test(
+      'keeps only that department without calling the source again',
+      () async {
+        final cubit = loaded();
+        await cubit.load();
+
+        cubit.filterByDepartment('ingenieria');
+
+        expect(
+          cubit.state,
+          ContactsData([bruno, anita], department: 'ingenieria'),
+        );
+      },
+    );
+
+    test('an empty department shows every contact again', () async {
+      final cubit = loaded();
+      await cubit.load();
+      cubit.filterByDepartment('ingenieria');
+
+      cubit.filterByDepartment('');
+
+      expect(cubit.state, ContactsData([ana, bruno, anita]));
+    });
+
+    test('combines with the search: both must match', () async {
+      final cubit = loaded();
+      await cubit.load();
+
+      cubit.filterByDepartment('ingenieria');
+      cubit.search('an');
+
+      expect(
+        cubit.state,
+        ContactsData([anita], query: 'an', department: 'ingenieria'),
+      );
+    });
+
+    test(
+      'no match for the combination is no results with both values',
+      () async {
+        final cubit = loaded();
+        await cubit.load();
+        cubit.filterByDepartment('diseno');
+
+        cubit.search('bruno');
+
+        expect(
+          cubit.state,
+          const ContactsNoResults(query: 'bruno', department: 'diseno'),
+        );
+      },
+    );
+
+    test('an unknown department is no results', () async {
+      final cubit = loaded();
+      await cubit.load();
+
+      cubit.filterByDepartment('marketing');
+
+      expect(cubit.state, const ContactsNoResults(department: 'marketing'));
+    });
+
+    test(
+      'a department set before the load is applied when data arrives',
+      () async {
+        final cubit = loaded();
+
+        cubit.filterByDepartment('diseno');
+        expect(cubit.state, const ContactsLoading());
+        await cubit.load();
+
+        expect(cubit.state, ContactsData([ana], department: 'diseno'));
+      },
+    );
+
+    test('reloading keeps the department', () async {
+      final cubit = loaded();
+      await cubit.load();
+      cubit.filterByDepartment('diseno');
+
+      await cubit.load();
+
+      expect(cubit.state, ContactsData([ana], department: 'diseno'));
+    });
+
+    test('the same department does not emit again', () async {
+      final cubit = loaded();
+      await cubit.load();
+      cubit.filterByDepartment('diseno');
+      final emitted = <ContactsState>[];
+      final subscription = cubit.stream.listen(emitted.add);
+
+      cubit.filterByDepartment('diseno');
       await Future<void>.delayed(Duration.zero);
       await subscription.cancel();
 

@@ -10,6 +10,7 @@ import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/domain/usec
 import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/presentation/cubit/contact_detail_cubit.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/presentation/ui/contact_detail_page.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/filter_contacts_by_department.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/search_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
@@ -37,8 +38,11 @@ class _DetailRepository implements ContactDetailRepository {
 
 Future<void> _pump(WidgetTester tester, String location) async {
   sl.registerFactory<ContactsCubit>(
-    () =>
-        ContactsCubit(GetContacts(_EmptyRepository()), const SearchContacts()),
+    () => ContactsCubit(
+      GetContacts(_EmptyRepository()),
+      const SearchContacts(),
+      const FilterContactsByDepartment(),
+    ),
   );
   sl.registerFactory<ContactDetailCubit>(
     () => ContactDetailCubit(GetContactById(_DetailRepository())),

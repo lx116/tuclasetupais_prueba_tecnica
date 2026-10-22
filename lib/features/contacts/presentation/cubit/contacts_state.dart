@@ -39,35 +39,41 @@ class ContactsError extends ContactsState {
   int get hashCode => Object.hash(ContactsError, message);
 }
 
-/// The contacts to show. [query] is the search that produced them, empty when
-/// every contact is shown.
+/// The contacts to show. [query] and [department] are the search and filter
+/// that produced them, empty when they were not used.
 class ContactsData extends ContactsState {
-  const ContactsData(this.contacts, {this.query = ''});
+  const ContactsData(this.contacts, {this.query = '', this.department = ''});
 
   final List<Contact> contacts;
   final String query;
+  final String department;
 
   @override
   bool operator ==(Object other) =>
       other is ContactsData &&
       other.query == query &&
+      other.department == department &&
       listEquals(other.contacts, contacts);
 
   @override
   int get hashCode =>
-      Object.hash(ContactsData, query, Object.hashAll(contacts));
+      Object.hash(ContactsData, query, department, Object.hashAll(contacts));
 }
 
-/// There are contacts, but none matches the search [query].
+/// There are contacts, but none matches the search [query] and the
+/// [department] filter.
 class ContactsNoResults extends ContactsState {
-  const ContactsNoResults(this.query);
+  const ContactsNoResults({this.query = '', this.department = ''});
 
   final String query;
+  final String department;
 
   @override
   bool operator ==(Object other) =>
-      other is ContactsNoResults && other.query == query;
+      other is ContactsNoResults &&
+      other.query == query &&
+      other.department == department;
 
   @override
-  int get hashCode => Object.hash(ContactsNoResults, query);
+  int get hashCode => Object.hash(ContactsNoResults, query, department);
 }

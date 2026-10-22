@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/filter_contacts_by_department.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/search_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
@@ -37,6 +38,7 @@ class _FakeRepository implements ContactRepository {
 ContactsCubit _cubit(List<Object> results) => ContactsCubit(
   GetContacts(_FakeRepository(results)),
   const SearchContacts(),
+  const FilterContactsByDepartment(),
 );
 
 Widget _app(ContactsCubit cubit) => MaterialApp(
