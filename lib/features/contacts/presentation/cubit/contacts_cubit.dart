@@ -4,8 +4,7 @@ import '../../domain/repositories/contacts_connection_exception.dart';
 import '../../domain/usecases/get_contacts.dart';
 import 'contacts_state.dart';
 
-const String _connectionMessage =
-    'Could not reach the server. Check your connection and try again.';
+const String _connectionMessage = 'Revisa tu conexión e inténtalo de nuevo.';
 
 class ContactsCubit extends Cubit<ContactsState> {
   ContactsCubit(this._getContacts) : super(const ContactsLoading());

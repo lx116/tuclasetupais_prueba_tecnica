@@ -6,8 +6,7 @@ import '../../domain/usecases/get_contact_by_id.dart';
 import 'contact_detail_state.dart';
 
 const String _unavailableMessage =
-    'This contact could not be loaded because the contacts list failed to '
-    'load. Go back to the list and try again.';
+    'La lista de contactos no se cargó. Vuelve a la lista e inténtalo de nuevo.';
 
 class ContactDetailCubit extends Cubit<ContactDetailState> {
   ContactDetailCubit(this._getContactById)

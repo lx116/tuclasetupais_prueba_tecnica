@@ -64,7 +64,7 @@ void main() {
     expect(cubit.state, isA<ContactDetailError>());
     expect(
       (cubit.state as ContactDetailError).message,
-      contains('list failed to load'),
+      contains('no se cargó'),
     );
   });
 
