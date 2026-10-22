@@ -1,3 +1,4 @@
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/contacts_availability.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -48,6 +49,7 @@ void main() {
           service,
           dice: FixedDice(2),
           latency: Duration.zero,
+          availability: ContactsAvailability(),
         ).getContacts(),
         isEmpty,
       );
@@ -70,6 +72,7 @@ void main() {
           service,
           dice: FixedDice(2),
           latency: Duration.zero,
+          availability: ContactsAvailability(),
         ).getContacts(),
         isEmpty,
       );
@@ -95,6 +98,7 @@ void main() {
           service,
           dice: FixedDice(2),
           latency: Duration.zero,
+          availability: ContactsAvailability(),
         );
 
         for (var read = 0; read < 2; read++) {
@@ -139,6 +143,7 @@ void main() {
               service,
               dice: FixedDice(2),
               latency: Duration.zero,
+              availability: ContactsAvailability(),
             ).getContacts,
             throwsFormatException,
           );

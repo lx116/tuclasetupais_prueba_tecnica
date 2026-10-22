@@ -1,3 +1,4 @@
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/contacts_availability.dart';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -26,6 +27,7 @@ Future<ContactRepositoryImpl> _repo(
       service,
       dice: FixedDice(roll),
       latency: Duration.zero,
+      availability: ContactsAvailability(),
     ),
   );
 }

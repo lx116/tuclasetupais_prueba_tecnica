@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
@@ -54,6 +55,21 @@ void main() {
       expect(find.text('Inactive'), findsNothing);
     });
 
+    testWidgets('reports taps', (tester) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ContactListItem(contact: _contact(1), onTap: () => taps++),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Camila Reyes'));
+
+      expect(taps, 1);
+    });
+
     testWidgets('flags an inactive contact', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -86,6 +102,37 @@ void main() {
 
       expect(find.byType(ContactListItem), findsNWidgets(2));
       expect(find.text('Matías Soto'), findsOneWidget);
+    });
+
+    testWidgets('tapping an item opens its detail route', (tester) async {
+      final cubit = _cubit([
+        [_contact(1), _contact(2, name: 'Matías Soto')],
+      ]);
+      await cubit.load();
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) => Scaffold(
+              body: BlocProvider.value(
+                value: cubit,
+                child: const ContactsList(),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/contacts/:id',
+            builder: (context, state) =>
+                Text('detail ${state.pathParameters['id']}'),
+          ),
+        ],
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      await tester.tap(find.text('Matías Soto'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('detail 2'), findsOneWidget);
     });
 
     testWidgets('shows the empty message when there are no contacts', (

@@ -52,6 +52,24 @@ class ServiceGetContacts {
   /// The [FormatException] that made the data invalid, if any.
   Object? get error => _error;
 
+  /// The in-memory contacts. Empty when the JSON was missing. Throws a
+  /// [FormatException] when the data did not match the model, and a
+  /// [StateError] if [load] never ran.
+  List<ContactModel> read() {
+    switch (status) {
+      case ContactsLoadStatus.loaded:
+        return contacts;
+      case ContactsLoadStatus.missing:
+        return const [];
+      case ContactsLoadStatus.invalid:
+        throw error as FormatException;
+      case ContactsLoadStatus.notLoaded:
+        throw StateError(
+          'ServiceGetContacts.load() must complete before reading contacts',
+        );
+    }
+  }
+
   Future<void> load() async {
     _contacts = const [];
     _error = null;

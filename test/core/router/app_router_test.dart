@@ -5,6 +5,10 @@ import 'package:tuclasetupais_prueba_tecnica/core/di/injection.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/router/app_router.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/router/app_routes.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/router/not_found_page.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/domain/repositories/contact_detail_repository.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/domain/usecases/get_contact_by_id.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/presentation/cubit/contact_detail_cubit.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/presentation/ui/contact_detail_page.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
@@ -15,9 +19,27 @@ class _EmptyRepository implements ContactRepository {
   Future<List<Contact>> getContacts() async => const [];
 }
 
+class _DetailRepository implements ContactDetailRepository {
+  @override
+  Future<Contact?> getContactById(int id) async => id == 1
+      ? const Contact(
+          id: 1,
+          name: 'Camila Reyes',
+          role: 'Product Designer',
+          department: 'Diseño',
+          email: 'camila.reyes@empresa.cl',
+          phone: '+56 9 1111 2222',
+          active: true,
+        )
+      : null;
+}
+
 Future<void> _pump(WidgetTester tester, String location) async {
   sl.registerFactory<ContactsCubit>(
     () => ContactsCubit(GetContacts(_EmptyRepository())),
+  );
+  sl.registerFactory<ContactDetailCubit>(
+    () => ContactDetailCubit(GetContactById(_DetailRepository())),
   );
   await tester.pumpWidget(
     MaterialApp.router(
@@ -44,6 +66,32 @@ void main() {
     await _pump(tester, '/');
 
     expect(find.byType(ContactsPage), findsOneWidget);
+  });
+
+  testWidgets('/contacts/:id loads the contact of the URL', (tester) async {
+    await _pump(tester, '/contacts/1');
+
+    expect(find.byType(ContactDetailPage), findsOneWidget);
+    expect(find.text('camila.reyes@empresa.cl'), findsOneWidget);
+    expect(find.byType(ContactsPage), findsNothing);
+  });
+
+  testWidgets('/contacts/:id with an unknown id shows the 404 page', (
+    tester,
+  ) async {
+    await _pump(tester, '/contacts/999');
+
+    expect(find.byType(NotFoundPage), findsOneWidget);
+    expect(find.text('Contact not found'), findsOneWidget);
+  });
+
+  testWidgets('/contacts/:id with a non-numeric id shows the 404 page', (
+    tester,
+  ) async {
+    await _pump(tester, '/contacts/abc');
+
+    expect(find.byType(NotFoundPage), findsOneWidget);
+    expect(find.byType(ContactDetailPage), findsNothing);
   });
 
   testWidgets('an unknown route shows the 404 page', (tester) async {

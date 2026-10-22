@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/router/app_routes.dart';
 
 import '../cubit/contacts_cubit.dart';
 import '../cubit/contacts_state.dart';
@@ -29,8 +32,11 @@ class ContactsList extends StatelessWidget {
         ),
         ContactsData(:final contacts) => ListView.builder(
           itemCount: contacts.length,
-          itemBuilder: (context, index) =>
-              ContactListItem(contact: contacts[index]),
+          itemBuilder: (context, index) => ContactListItem(
+            contact: contacts[index],
+            onTap: () =>
+                context.push(AppRoutes.contactDetail(contacts[index].id)),
+          ),
         ),
       },
     );

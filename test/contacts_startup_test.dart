@@ -1,3 +1,4 @@
+import 'package:tuclasetupais_prueba_tecnica/core/contacts/data/contacts_availability.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -42,6 +43,7 @@ void main() {
         service,
         dice: FixedDice(2),
         latency: Duration.zero,
+        availability: ContactsAvailability(),
       );
       final contacts = await datasource.getContacts();
       expect(contacts.map((model) => model.toEntity()), expected);

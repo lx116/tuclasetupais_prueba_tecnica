@@ -1,12 +1,14 @@
 import 'dart:developer' as developer;
 
+import '../../../../core/contacts/data/contacts_availability.dart';
 import '../../../../core/contacts/data/models/contact_model.dart';
+import '../../../../core/contacts/data/service_get_contacts.dart';
+import '../../domain/repositories/contacts_connection_exception.dart';
 import 'contacts_calls/call_empty.dart';
 import 'contacts_calls/call_error.dart';
 import 'contacts_calls/call_ok.dart';
 import 'contacts_calls/contacts_call.dart';
 import 'dice_roller.dart';
-import '../../../../core/contacts/data/service_get_contacts.dart';
 
 /// Serves the contacts that [ServiceGetContacts] loaded into memory, behind a
 /// simulated back call: after [latency], a die roll picks the outcome.
@@ -19,11 +21,13 @@ class ContactsLocalDataSource {
     this._service, {
     required this.dice,
     required this.latency,
+    required this.availability,
   });
 
   final ServiceGetContacts _service;
   final DiceRoller dice;
   final Duration latency;
+  final ContactsAvailability availability;
 
   Future<List<ContactModel>> getContacts() async {
     if (latency > Duration.zero) await Future<void>.delayed(latency);
@@ -34,7 +38,14 @@ class ContactsLocalDataSource {
       'Simulated contacts call: rolled $roll -> ${call.runtimeType}',
       name: 'ContactsLocalDataSource',
     );
-    return call.execute();
+    try {
+      final models = await call.execute();
+      availability.markAvailable();
+      return models;
+    } on ContactsConnectionException {
+      availability.markFailed();
+      rethrow;
+    }
   }
 
   ContactsCall _callFor(int roll) => switch (roll) {
