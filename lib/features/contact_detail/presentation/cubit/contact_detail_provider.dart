@@ -5,6 +5,10 @@ import '../../../../core/di/injection.dart';
 import 'contact_detail_cubit.dart';
 
 /// Creates the [ContactDetailCubit] from DI and loads [contactId].
+///
+/// Keyed by [contactId]: going from one contact to another reuses this widget,
+/// so without the key the first cubit would stay and the detail would remain
+/// pinned to the first contact.
 class ContactDetailProvider extends StatelessWidget {
   const ContactDetailProvider({
     super.key,
@@ -18,6 +22,7 @@ class ContactDetailProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ContactDetailCubit>(
+      key: ValueKey(contactId),
       create: (_) => sl<ContactDetailCubit>()..load(contactId),
       child: child,
     );

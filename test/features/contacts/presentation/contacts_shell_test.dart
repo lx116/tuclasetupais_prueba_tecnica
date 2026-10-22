@@ -245,6 +245,53 @@ void main() {
       expect(dice.rolls, 1);
     });
 
+    testWidgets('wide: clicking another contact replaces the open detail', (
+      tester,
+    ) async {
+      final router = await open(tester, '/contacts/2', size: _wide);
+      expect(inDetail('Contacto 2'), findsOneWidget);
+
+      await tester.tap(find.text('Contacto 5'));
+      await tester.pumpAndSettle();
+
+      expect(router.routeInformationProvider.value.uri.path, '/contacts/5');
+      expect(inDetail('Contacto 5'), findsOneWidget);
+      expect(inDetail('Contacto 2'), findsNothing);
+      expect(find.byType(ContactDetailPage), findsOneWidget);
+      expect(dice.rolls, 1);
+    });
+
+    testWidgets('wide: the detail follows every click, not just the first', (
+      tester,
+    ) async {
+      await open(tester, '/contacts', size: _wide);
+
+      for (final id in [3, 7, 3, 1]) {
+        await tester.tap(find.text('Contacto $id'));
+        await tester.pumpAndSettle();
+
+        expect(inDetail('Contacto $id'), findsOneWidget, reason: 'id $id');
+        final selected = tester
+            .widgetList<ContactListItem>(find.byType(ContactListItem))
+            .where((item) => item.selected)
+            .map((item) => item.contact.id);
+        expect(selected, [id], reason: 'highlight for id $id');
+      }
+    });
+
+    testWidgets('mobile: a link to another contact replaces the detail', (
+      tester,
+    ) async {
+      final router = await open(tester, '/contacts/2', size: _mobile);
+      expect(inDetail('Contacto 2'), findsOneWidget);
+
+      router.go('/contacts/7');
+      await tester.pumpAndSettle();
+
+      expect(inDetail('Contacto 7'), findsOneWidget);
+      expect(inDetail('Contacto 2'), findsNothing);
+    });
+
     testWidgets('wide: the open contact is highlighted in the list', (
       tester,
     ) async {
