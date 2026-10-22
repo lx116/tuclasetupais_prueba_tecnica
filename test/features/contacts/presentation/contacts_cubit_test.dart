@@ -84,7 +84,7 @@ void main() {
     expect(cubit.state, isA<ContactsError>());
     expect(
       (cubit.state as ContactsError).message,
-      contains('Check your connection'),
+      contains('Revisa tu conexión'),
     );
   });
 

@@ -3,8 +3,8 @@ class AppRoutes {
 
   static const String contacts = '/contacts';
 
-  /// Route pattern for go_router: `/contacts/:id`.
-  static const String contactDetailPattern = '$contacts/:id';
+  /// Child segment of [contacts]: the full route is `/contacts/:id`.
+  static const String contactDetailSegment = ':id';
 
   static String contactDetail(int id) => '$contacts/$id';
 }

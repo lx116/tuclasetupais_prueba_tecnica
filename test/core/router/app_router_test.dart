@@ -82,7 +82,7 @@ void main() {
     await _pump(tester, '/contacts/999');
 
     expect(find.byType(NotFoundPage), findsOneWidget);
-    expect(find.text('Contact not found'), findsOneWidget);
+    expect(find.text('Contacto no encontrado'), findsOneWidget);
   });
 
   testWidgets('/contacts/:id with a non-numeric id shows the 404 page', (
@@ -104,7 +104,7 @@ void main() {
   testWidgets('the 404 page links back to the list', (tester) async {
     await _pump(tester, '/nope');
 
-    await tester.tap(find.text('Back to contacts'));
+    await tester.tap(find.text('Volver a contactos'));
     await tester.pumpAndSettle();
 
     expect(find.byType(ContactsPage), findsOneWidget);

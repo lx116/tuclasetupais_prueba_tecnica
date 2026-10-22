@@ -65,6 +65,10 @@ void main() {
     addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await tester.pumpAndSettle();
+    // The loading skeleton is static, so settling does not wait for the
+    // simulated 800ms list call.
+    await tester.pump(contactsLatency);
+    await tester.pumpAndSettle();
     return router;
   }
 
@@ -138,9 +142,7 @@ void main() {
         sl.registerSingleton<DiceRoller>(dice);
         final router = await openUrl(tester, '/contacts');
         expect(
-          find.text(
-            'Could not reach the server. Check your connection and try again.',
-          ),
+          find.text('Revisa tu conexión e inténtalo de nuevo.'),
           findsOneWidget,
         );
         expect(dice.rolls, 1);
@@ -155,8 +157,8 @@ void main() {
         expect(find.text('404'), findsNothing);
         expect(find.text('Camila Reyes'), findsNothing);
         expect(find.text('Matías Soto'), findsNothing);
-        expect(find.textContaining('list failed to load'), findsOneWidget);
-        expect(find.text('Back to contacts'), findsOneWidget);
+        expect(find.textContaining('no se cargó'), findsOneWidget);
+        expect(find.text('Volver a contactos'), findsOneWidget);
         expect(
           dice.rolls,
           1,

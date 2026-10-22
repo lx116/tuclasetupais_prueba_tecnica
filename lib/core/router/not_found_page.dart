@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import 'app_routes.dart';
+import '../theme/app_colors.dart';
+import '../widgets/back_to_contacts_button.dart';
+import '../widgets/state_message.dart';
 
 /// Shown for unknown routes and for resources that do not exist.
 class NotFoundPage extends StatelessWidget {
-  const NotFoundPage({super.key, this.message = 'Page not found'});
+  const NotFoundPage({super.key, this.message = 'Página no encontrada'});
 
   final String message;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('404', style: Theme.of(context).textTheme.displayMedium),
-            Text(message),
-            TextButton(
-              onPressed: () => context.go(AppRoutes.contacts),
-              child: const Text('Back to contacts'),
-            ),
-          ],
-        ),
+    return Material(
+      color: AppColors.mintCream,
+      child: StateMessage(
+        icon: Icons.search_off,
+        title: '404',
+        message: message,
+        action: const BackToContactsButton(),
       ),
     );
   }

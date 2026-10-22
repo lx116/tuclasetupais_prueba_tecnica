@@ -13,7 +13,7 @@ Branch: feat/ui-shell (stacked on feat/contact-detail, PR #2). Delivery: work-un
 
 ## Tasks
 - T1 (S5) Design system in core: AppColors, AppTheme with bundled Manrope, breakpoints, StateMessage, ReloadButton, BrandHeader. Route: inline. Commit: see git log "feat(ui): add design system"
-- T2 (S1-S6, S8) ContactsShell (ShellRoute), list panel, skeleton, reload buttons, detail restyle, 404 restyle, Spanish copy, updated tests. Route: inline. Commit: pending
+- T2 (S1-S6, S8) ContactsShell (ShellRoute), list panel, skeleton, reload buttons, detail restyle, 404 restyle, Spanish copy, updated tests. Route: inline. Commit: see git log "feat(ui): integrate the design with a ShellRoute master-detail"
 
 Route declaration: inline, sequential and dependent units, no writer trigger.
 
@@ -21,3 +21,4 @@ Route declaration: inline, sequential and dependent units, no writer trigger.
 - L1 (2026-10-22) "Vamos a realizar el nuevo ticket 3, la UI. Te voy a proporcionar el contenido de desing para integrarlo a la UI. /Users/luisvelez/Downloads/Contacts App.html vamos a usar el shell router y persistencia en redimencion. La redimencion no debe romper el contenido ni hacerlo perder. Ademas agrega un boton de reload para cunado ocurra el problema de la lista vacia o el error. TICKET 03- 6- IU. La interfaz de usuario requiere shell route para dividir la vista en dos columnas. La columan de contactos y la columna de detalle. Esta herramienta viene incluida dentro de go_router. Una pantalla se considera ancha una vez pasados los 900px, por debajo de esta es una vista mobile"
 - L2 (2026-10-22) Decision: UI copy in Spanish (asked; user picked "Español, como el diseño").
 - L3 Engram mirror pending (mem_save fails with "multiple active runtime sessions"); this file is the source of truth.
+- L4 Evidence: flutter analyze clean, 152 tests pass (3 runs), `flutter build web` OK. Skeleton loading is static, so `pumpAndSettle` no longer waits for the simulated 800ms call; tests now `pump(contactsLatency)`. Updated copy assertions in test/features/contact_detail/presentation/contact_detail_routing_contract_test.dart (not written by the agent) to Spanish and added the latency pump to its helper. Not verified: real rendering of the variable font weights and the visual match to the boards (no device or browser run).

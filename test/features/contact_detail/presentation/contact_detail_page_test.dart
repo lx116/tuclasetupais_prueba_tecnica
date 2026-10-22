@@ -61,10 +61,10 @@ void main() {
 
     expect(find.text('Valentina Cid'), findsOneWidget);
     expect(find.text('QA Lead'), findsOneWidget);
-    expect(find.text('Ingeniería'), findsOneWidget);
+    expect(find.text('Ingeniería'), findsWidgets);
     expect(find.text('valentina.cid@empresa.cl'), findsOneWidget);
     expect(find.text('+56 9 3333 4444'), findsOneWidget);
-    expect(find.text('Inactive'), findsOneWidget);
+    expect(find.text('Inactivo'), findsOneWidget);
   });
 
   testWidgets('shows the 404 page for an id that does not exist', (
@@ -73,7 +73,7 @@ void main() {
     await _pump(tester, null);
 
     expect(find.byType(NotFoundPage), findsOneWidget);
-    expect(find.text('Contact not found'), findsOneWidget);
+    expect(find.text('Contacto no encontrado'), findsOneWidget);
   });
 
   testWidgets('shows a load error when the list failed, with a way back', (
@@ -81,10 +81,10 @@ void main() {
   ) async {
     await _pump(tester, const ContactDetailUnavailableException());
 
-    expect(find.textContaining('list failed to load'), findsOneWidget);
+    expect(find.textContaining('no se cargó'), findsOneWidget);
     expect(find.byType(NotFoundPage), findsNothing);
 
-    await tester.tap(find.text('Back to contacts'));
+    await tester.tap(find.text('Volver a contactos'));
     await tester.pumpAndSettle();
 
     expect(find.text('list page'), findsOneWidget);
