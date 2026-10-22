@@ -8,6 +8,7 @@ import '../favorites/presentation/favorites_cubit.dart';
 import '../../features/contact_detail/presentation/ui/contact_detail_page.dart';
 import '../../features/contacts/presentation/ui/contacts_shell.dart';
 import '../../features/contacts/presentation/ui/detail_placeholder.dart';
+import '../../features/favorites/presentation/ui/favorites_page.dart';
 import 'app_routes.dart';
 import 'contacts_query.dart';
 import 'not_found_page.dart';
@@ -24,6 +25,13 @@ GoRouter createAppRouter({String initialLocation = AppRoutes.contacts}) {
           child: child,
         ),
         routes: [
+          GoRoute(
+            path: AppRoutes.favorites,
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const FavoritesPage(),
+            ),
+          ),
           // The shell splits the screen into the contacts column and the detail
           // column (wide) or shows one of them (mobile). Its children render in
           // the detail column.

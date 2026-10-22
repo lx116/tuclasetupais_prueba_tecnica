@@ -24,6 +24,11 @@ import '../../features/contacts/domain/usecases/filter_contacts_by_department.da
 import '../../features/contacts/domain/usecases/get_contacts.dart';
 import '../../features/contacts/domain/usecases/search_contacts.dart';
 import '../../features/contacts/presentation/cubit/contacts_cubit.dart';
+import '../../features/favorites/data/datasources/favorite_contacts_local_datasource.dart';
+import '../../features/favorites/data/repositories/favorite_contacts_repository_impl.dart';
+import '../../features/favorites/domain/repositories/favorite_contacts_repository.dart';
+import '../../features/favorites/domain/usecases/get_favorite_contacts.dart';
+import '../../features/favorites/presentation/cubit/favorite_contacts_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -98,6 +103,23 @@ Future<void> initDependencies() async {
   );
   sl.registerFactory<ContactDetailCubit>(
     () => ContactDetailCubit(sl<GetContactById>()),
+  );
+
+  // favorites page
+  sl.registerLazySingleton<FavoriteContactsLocalDataSource>(
+    () => FavoriteContactsLocalDataSource(
+      sl<ServiceGetContacts>(),
+      sl<ContactsAvailability>(),
+    ),
+  );
+  sl.registerLazySingleton<FavoriteContactsRepository>(
+    () => FavoriteContactsRepositoryImpl(sl<FavoriteContactsLocalDataSource>()),
+  );
+  sl.registerLazySingleton<GetFavoriteContacts>(
+    () => GetFavoriteContacts(sl<FavoriteContactsRepository>()),
+  );
+  sl.registerFactory<FavoriteContactsCubit>(
+    () => FavoriteContactsCubit(sl<GetFavoriteContacts>()),
   );
 }
 

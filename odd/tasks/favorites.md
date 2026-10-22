@@ -13,10 +13,11 @@ Branch: feat/favorites (stacked on feat/contact-filters, PR #5). Delivery: work-
 ## Tasks
 - T1 (S2, S5, S7) core/favorites: domain, data (shared_preferences), FavoritesCubit, FavoriteButton, DI + startServices. Route: inline. Commit: see git log "feat(favorites): add the favorites state, storage and rules"
 - T2 (S1, S4) Stars in the list rows and the detail, header nav with the count, router-level provider. Route: inline. Commit: see git log "feat(favorites): add the star to the list and the detail, and the header navigation"
-- T3 (S3, S6) features/favorites page and the /favorites route. Route: inline. Commit: pending
+- T3 (S3, S6) features/favorites page and the /favorites route. Route: inline. Commit: see git log "feat(favorites): add the favorites page at /favorites"
 
 Route declaration: inline, sequential and dependent units, no writer trigger.
 
 ## Log
 - L1 (2026-10-22) "Empecemos con favoritos del ticket 06" + lib/mai: "TICKET 06 5- Favoritos. Hasta el momento este componente se esta queando por fuera de la lista. Dentro de lo que cabe, el Favoritos puede posponerse y agregarse luego, no entraria dentro de una primera neciedad como lo puede ser una barra de busqueda o un filtros de query. Son las 4:54 al momento de esta entrada, aun asi no descarto que se logre."
 - L2 PR #5 (filters) opened first. Engram mirror pending (mem_save fails with "multiple active runtime sessions"); this file is the source of truth.
+- L3 Evidence: flutter analyze clean, 311 tests pass (3 runs), `flutter build web` OK. Decisions: shared favorites state in `lib/core/favorites` (cubit provided by the router through an outer ShellRoute, so tests that build the router get it from DI); the page is `features/favorites` with its own use case and reads contacts from memory (no dice, gated by ContactsAvailability); the page only asks for contacts once the stored favorites are read; stored ids with no contact are left out of the page but still counted in the header badge. Storage failures on load start with no favorites and log. Not verified: the look in a browser, and real device storage (tests use the shared_preferences mock; the storage plugin needs the real clock, so persistence is tested outside the fake-async zone).
