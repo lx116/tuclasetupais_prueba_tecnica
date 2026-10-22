@@ -13,6 +13,7 @@ import '../contacts/data/service_get_contacts.dart';
 import '../../features/contacts/data/repositories/contact_repository_impl.dart';
 import '../../features/contacts/domain/repositories/contact_repository.dart';
 import '../../features/contacts/domain/usecases/get_contacts.dart';
+import '../../features/contacts/domain/usecases/search_contacts.dart';
 import '../../features/contacts/presentation/cubit/contacts_cubit.dart';
 
 final sl = GetIt.instance;
@@ -47,7 +48,10 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<GetContacts>(
     () => GetContacts(sl<ContactRepository>()),
   );
-  sl.registerFactory<ContactsCubit>(() => ContactsCubit(sl<GetContacts>()));
+  sl.registerLazySingleton<SearchContacts>(SearchContacts.new);
+  sl.registerFactory<ContactsCubit>(
+    () => ContactsCubit(sl<GetContacts>(), sl<SearchContacts>()),
+  );
 
   // contact detail
   sl.registerLazySingleton<ContactDetailLocalDataSource>(

@@ -2,27 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../router/app_routes.dart';
-import '../theme/app_colors.dart';
-import '../theme/app_text.dart';
+import '../router/current_location.dart';
+import 'secondary_button.dart';
 
-/// Secondary action that returns to the contacts list.
+/// Secondary action that returns to the contacts list, keeping the search.
 class BackToContactsButton extends StatelessWidget {
   const BackToContactsButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: () => context.go(AppRoutes.contacts),
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size(0, 48),
-        padding: const EdgeInsets.symmetric(horizontal: 22),
-        foregroundColor: AppColors.darkTeal,
-        backgroundColor: AppColors.surface,
-        side: const BorderSide(color: AppColors.darkTeal, width: 2),
-        textStyle: appText(size: 15, weight: 700),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return SecondaryButton(
+      label: 'Volver a contactos',
+      onPressed: () => context.go(
+        AppRoutes.contactsLocation(search: currentSearchOf(context)),
       ),
-      child: const Text('Volver a contactos'),
     );
   }
 }

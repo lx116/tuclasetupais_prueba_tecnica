@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/repositories/contact_repository.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/get_contacts.dart';
+import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/search_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/ui/contact_list_item.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/ui/contacts_list.dart';
@@ -33,8 +34,10 @@ class _FakeRepository implements ContactRepository {
   }
 }
 
-ContactsCubit _cubit(List<Object> results) =>
-    ContactsCubit(GetContacts(_FakeRepository(results)));
+ContactsCubit _cubit(List<Object> results) => ContactsCubit(
+  GetContacts(_FakeRepository(results)),
+  const SearchContacts(),
+);
 
 Widget _app(ContactsCubit cubit) => MaterialApp(
   home: Scaffold(

@@ -7,6 +7,7 @@ import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text.dart';
 import '../../../../core/widgets/reload_button.dart';
+import '../../../../core/widgets/secondary_button.dart';
 import '../../../../core/widgets/state_message.dart';
 import '../cubit/contacts_cubit.dart';
 import '../cubit/contacts_state.dart';
@@ -14,11 +15,20 @@ import 'contact_list_item.dart';
 import 'contacts_skeleton.dart';
 
 /// Renders every [ContactsState]. [selectedId] is the contact open in the
-/// detail column, if any.
+/// detail column, if any. [search] is carried to the contact links so opening
+/// a contact keeps the search; [onClearSearch] resets it from the no-results
+/// state.
 class ContactsList extends StatelessWidget {
-  const ContactsList({super.key, this.selectedId});
+  const ContactsList({
+    super.key,
+    this.selectedId,
+    this.search = '',
+    this.onClearSearch,
+  });
 
   final int? selectedId;
+  final String search;
+  final VoidCallback? onClearSearch;
 
   @override
   Widget build(BuildContext context) {
@@ -49,13 +59,24 @@ class ContactsList extends StatelessWidget {
             onPressed: () => context.read<ContactsCubit>().load(),
           ),
         ),
-        ContactsData(:final contacts) => Column(
+        ContactsNoResults(:final query) => StateMessage(
+          icon: Icons.search_off,
+          title: 'Sin resultados para “$query”',
+          message: 'Prueba con otro término.',
+          action: onClearSearch == null
+              ? null
+              : SecondaryButton(
+                  label: 'Limpiar búsqueda',
+                  onPressed: onClearSearch!,
+                ),
+        ),
+        ContactsData(:final contacts, :final query) => Column(
           children: [
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: _Count(count: contacts.length),
+                child: _Count(count: contacts.length, query: query),
               ),
             ),
             Expanded(
@@ -72,8 +93,9 @@ class ContactsList extends StatelessWidget {
                     contact: contact,
                     card: !wide,
                     selected: contact.id == selectedId,
-                    onTap: () =>
-                        context.go(AppRoutes.contactDetail(contact.id)),
+                    onTap: () => context.go(
+                      AppRoutes.contactDetail(contact.id, search: search),
+                    ),
                   );
                 },
               ),
@@ -86,9 +108,10 @@ class ContactsList extends StatelessWidget {
 }
 
 class _Count extends StatelessWidget {
-  const _Count({required this.count});
+  const _Count({required this.count, required this.query});
 
   final int count;
+  final String query;
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +121,11 @@ class _Count extends StatelessWidget {
         style: style,
         children: [
           TextSpan(text: '$count', style: appText(size: 13, weight: 700)),
-          TextSpan(text: count == 1 ? ' resultado' : ' resultados'),
+          TextSpan(
+            text:
+                (count == 1 ? ' resultado' : ' resultados') +
+                (query.isEmpty ? '' : ' para “$query”'),
+          ),
         ],
       ),
     );

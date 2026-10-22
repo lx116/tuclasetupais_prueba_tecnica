@@ -9,8 +9,8 @@ const double _listColumnWidth = 400;
 
 /// Frame of the ShellRoute: the contacts column plus the detail column.
 ///
-/// Wide (> 900px): both columns side by side. Mobile: the list, or the detail
-/// when one is open. The list and the detail are keyed and, once built, kept
+/// Wide (> 900px): both columns side by side. Mobile: the list (which brings
+/// its own header), or the detail when one is open. The list and the detail are keyed and, once built, kept
 /// in the tree, so resizing across the breakpoint moves them instead of
 /// recreating them: the cubit, the loaded data and the scroll position stay.
 class ContactsShell extends StatefulWidget {
@@ -19,6 +19,7 @@ class ContactsShell extends StatefulWidget {
     required this.detail,
     required this.detailOpen,
     this.selectedId,
+    this.search = '',
   });
 
   /// The ShellRoute child: the placeholder or the open contact.
@@ -29,6 +30,9 @@ class ContactsShell extends StatefulWidget {
 
   /// The id of the open contact, when the URL holds a numeric one.
   final int? selectedId;
+
+  /// The `?search=` text of the URL.
+  final String search;
 
   @override
   State<ContactsShell> createState() => _ContactsShellState();
@@ -50,7 +54,11 @@ class _ContactsShellState extends State<ContactsShell> {
         if (wide || !widget.detailOpen) _listBuilt = true;
 
         final list = _listBuilt
-            ? ContactsPage(key: _listKey, selectedId: widget.selectedId)
+            ? ContactsPage(
+                key: _listKey,
+                selectedId: widget.selectedId,
+                search: widget.search,
+              )
             : const SizedBox.shrink();
         final detail = KeyedSubtree(key: _detailKey, child: widget.detail);
 
@@ -83,10 +91,6 @@ class _ContactsShellState extends State<ContactsShell> {
 
         return Column(
           children: [
-            Offstage(
-              offstage: widget.detailOpen,
-              child: const BrandHeader(compact: true),
-            ),
             Expanded(
               child: Stack(
                 fit: StackFit.expand,
