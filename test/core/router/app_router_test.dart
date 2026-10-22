@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/contacts/domain/entities/contact.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/di/injection.dart';
+import 'package:tuclasetupais_prueba_tecnica/core/favorites/presentation/favorites_cubit.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/router/app_router.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/router/app_routes.dart';
 import 'package:tuclasetupais_prueba_tecnica/core/router/not_found_page.dart';
@@ -15,6 +16,8 @@ import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/g
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/domain/usecases/search_contacts.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/cubit/contacts_cubit.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contacts/presentation/ui/contacts_page.dart';
+
+import '../../support/favorites_fixtures.dart';
 
 class _EmptyRepository implements ContactRepository {
   @override
@@ -37,6 +40,9 @@ class _DetailRepository implements ContactDetailRepository {
 }
 
 Future<void> _pump(WidgetTester tester, String location) async {
+  sl.registerLazySingleton<FavoritesCubit>(
+    () => favoritesCubitFor(InMemoryFavoritesRepository()),
+  );
   sl.registerFactory<ContactsCubit>(
     () => ContactsCubit(
       GetContacts(_EmptyRepository()),

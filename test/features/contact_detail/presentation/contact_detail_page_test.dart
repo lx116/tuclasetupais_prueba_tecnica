@@ -10,6 +10,8 @@ import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/domain/usec
 import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/presentation/cubit/contact_detail_cubit.dart';
 import 'package:tuclasetupais_prueba_tecnica/features/contact_detail/presentation/ui/contact_detail_page.dart';
 
+import '../../../support/favorites_fixtures.dart';
+
 const _contact = Contact(
   id: 3,
   name: 'Valentina Cid',
@@ -36,11 +38,14 @@ Future<void> _pump(WidgetTester tester, Object? result) async {
   sl.registerFactory<ContactDetailCubit>(
     () => ContactDetailCubit(GetContactById(_FakeRepository(result))),
   );
+  final favorites = favoritesCubitFor(InMemoryFavoritesRepository());
+  addTearDown(favorites.close);
   final router = GoRouter(
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const ContactDetailPage(contactId: 3),
+        builder: (context, state) =>
+            withFavorites(favorites, const ContactDetailPage(contactId: 3)),
       ),
       GoRoute(
         path: '/contacts',

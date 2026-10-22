@@ -5,9 +5,12 @@ import '../theme/app_text.dart';
 
 /// Dark teal top bar with the app mark and name.
 class BrandHeader extends StatelessWidget {
-  const BrandHeader({super.key, this.compact = false});
+  const BrandHeader({super.key, this.compact = false, this.trailing});
 
   final bool compact;
+
+  /// Shown at the right end, e.g. the navigation.
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +48,7 @@ class BrandHeader extends StatelessWidget {
                   color: AppColors.mintCream,
                 ),
               ),
+              if (trailing != null) ...[const Spacer(), trailing!],
             ],
           ),
         ),

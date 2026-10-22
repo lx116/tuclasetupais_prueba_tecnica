@@ -7,6 +7,7 @@ import '../../../../core/router/contacts_query.dart';
 import '../../../../core/router/current_location.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/brand_header.dart';
+import '../../../../core/widgets/header_nav.dart';
 import '../../../../shared/presentation/widgets/search_input.dart';
 import '../cubit/contacts_cubit.dart';
 import '../cubit/contacts_provider.dart';
@@ -113,7 +114,13 @@ class _ContactsViewState extends State<_ContactsView> {
             color: AppColors.darkTeal,
             child: Column(
               children: [
-                const BrandHeader(compact: true),
+                const BrandHeader(
+                  compact: true,
+                  trailing: HeaderNav(
+                    current: HeaderSection.contacts,
+                    compact: true,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: input,

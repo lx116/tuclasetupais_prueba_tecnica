@@ -12,7 +12,7 @@ Branch: feat/favorites (stacked on feat/contact-filters, PR #5). Delivery: work-
 
 ## Tasks
 - T1 (S2, S5, S7) core/favorites: domain, data (shared_preferences), FavoritesCubit, FavoriteButton, DI + startServices. Route: inline. Commit: see git log "feat(favorites): add the favorites state, storage and rules"
-- T2 (S1, S4) Stars in the list rows and the detail, header nav with the count, router-level provider. Route: inline. Commit: pending
+- T2 (S1, S4) Stars in the list rows and the detail, header nav with the count, router-level provider. Route: inline. Commit: see git log "feat(favorites): add the star to the list and the detail, and the header navigation"
 - T3 (S3, S6) features/favorites page and the /favorites route. Route: inline. Commit: pending
 
 Route declaration: inline, sequential and dependent units, no writer trigger.

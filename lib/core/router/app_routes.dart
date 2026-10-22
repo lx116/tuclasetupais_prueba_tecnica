@@ -4,6 +4,7 @@ class AppRoutes {
   const AppRoutes._();
 
   static const String contacts = '/contacts';
+  static const String favorites = '/favorites';
 
   /// Child segment of [contacts]: the full route is `/contacts/:id`.
   static const String contactDetailSegment = ':id';
